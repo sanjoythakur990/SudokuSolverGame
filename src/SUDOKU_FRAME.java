@@ -30,9 +30,16 @@ public class SUDOKU_FRAME extends javax.swing.JFrame {
         {"3","7","5","9","6","4","8","1","2"},
         {"6","8","9","7","2","1","4","5","3"}
     };
+    private JButton preDefinedbtns[];
+    private JButton btns[][];
     private boolean globalVar=false;
     public SUDOKU_FRAME() {
         initComponents();
+        this.preDefinedbtns=new JButton[]{r1c4,r1c7,r1c8,r1c9,r2c1,r2c5,r2c6,r2c7,r2c9,r3c1,r3c3,r3c5,r3c8
+          ,r4c5,r4c6,r4c8,r5c2,r5c3,r5c7,r5c8,r6c2,r6c4,r6c5,r7c2,r7c5,r7c7,r7c9,r8c1,r8c4
+         ,r8c5,r8c9,r9c1,r9c3,r9c6
+        };
+        this.btns = new JButton[][]{{r1c1,r1c2,r1c3,r1c4,r1c5,r1c6,r1c7,r1c8,r1c9}, {r2c1,r2c2,r2c3,r2c4,r2c5,r2c6,r2c7,r2c8,r2c9}, {r3c1,r3c2,r3c3,r3c4,r3c5,r3c6,r3c7,r3c8,r3c9}, {r4c1,r4c2,r4c3,r4c4,r4c5,r4c6,r4c7,r4c8,r4c9}, {r5c1,r5c2,r5c3,r5c4,r5c5,r5c6,r5c7,r5c8,r5c9}, {r6c1,r6c2,r6c3,r6c4,r6c5,r6c6,r6c7,r6c8,r6c9}, {r7c1,r7c2,r7c3,r7c4,r7c5,r7c6,r7c7,r7c8,r7c9}, {r8c1,r8c2,r8c3,r8c4,r8c5,r8c6,r8c7,r8c8,r8c9}, {r9c1,r9c2,r9c3,r9c4,r9c5,r9c6,r9c7,r9c8,r9c9}};
     }
     public void chooseNumber(JButton btn){
         selectionbtn1.setBackground(black);
@@ -47,22 +54,7 @@ public class SUDOKU_FRAME extends javax.swing.JFrame {
         
         btn.setBackground(blue);
     }
-    public void seeSolution(){
-        JButton preDefinedbtns[]={r1c4,r1c7,r1c8,r1c9,r2c1,r2c5,r2c6,r2c7,r2c9,r3c1,r3c3,r3c5,r3c8
-          ,r4c5,r4c6,r4c8,r5c2,r5c3,r5c7,r5c8,r6c2,r6c4,r6c5,r7c2,r7c5,r7c7,r7c9,r8c1,r8c4
-          ,r8c5,r8c9,r9c1,r9c3,r9c6
-        };
-        JButton btns[][]={
-            {r1c1,r1c2,r1c3,r1c4,r1c5,r1c6,r1c7,r1c8,r1c9},
-            {r2c1,r2c2,r2c3,r2c4,r2c5,r2c6,r2c7,r2c8,r2c9},
-            {r3c1,r3c2,r3c3,r3c4,r3c5,r3c6,r3c7,r3c8,r3c9},
-            {r4c1,r4c2,r4c3,r4c4,r4c5,r4c6,r4c7,r4c8,r4c9},
-            {r5c1,r5c2,r5c3,r5c4,r5c5,r5c6,r5c7,r5c8,r5c9},
-            {r6c1,r6c2,r6c3,r6c4,r6c5,r6c6,r6c7,r6c8,r6c9},
-            {r7c1,r7c2,r7c3,r7c4,r7c5,r7c6,r7c7,r7c8,r7c9},
-            {r8c1,r8c2,r8c3,r8c4,r8c5,r8c6,r8c7,r8c8,r8c9},
-            {r9c1,r9c2,r9c3,r9c4,r9c5,r9c6,r9c7,r9c8,r9c9},
-        }; 
+    public void seeSolution(){ 
         for(int i=0;i<9;i++){
             for(int j=0;j<9;j++){
                 boolean flag=false;
@@ -96,17 +88,6 @@ public class SUDOKU_FRAME extends javax.swing.JFrame {
         }
     }
     public void checkMoves(){
-        JButton btns[][]={
-            {r1c1,r1c2,r1c3,r1c4,r1c5,r1c6,r1c7,r1c8,r1c9},
-            {r2c1,r2c2,r2c3,r2c4,r2c5,r2c6,r2c7,r2c8,r2c9},
-            {r3c1,r3c2,r3c3,r3c4,r3c5,r3c6,r3c7,r3c8,r3c9},
-            {r4c1,r4c2,r4c3,r4c4,r4c5,r4c6,r4c7,r4c8,r4c9},
-            {r5c1,r5c2,r5c3,r5c4,r5c5,r5c6,r5c7,r5c8,r5c9},
-            {r6c1,r6c2,r6c3,r6c4,r6c5,r6c6,r6c7,r6c8,r6c9},
-            {r7c1,r7c2,r7c3,r7c4,r7c5,r7c6,r7c7,r7c8,r7c9},
-            {r8c1,r8c2,r8c3,r8c4,r8c5,r8c6,r8c7,r8c8,r8c9},
-            {r9c1,r9c2,r9c3,r9c4,r9c5,r9c6,r9c7,r9c8,r9c9},
-        }; 
         for(int i=0;i<9;i++){
             for(int j=0;j<9;j++){
                 if(!btns[i][j].getText().equals(solvedBoard[i][j]) && !btns[i][j].getText().equals(""))
@@ -115,21 +96,6 @@ public class SUDOKU_FRAME extends javax.swing.JFrame {
         }
     }
     public void resetGame(){
-        JButton preDefinedbtns[]={r1c4,r1c7,r1c8,r1c9,r2c1,r2c5,r2c6,r2c7,r2c9,r3c1,r3c3,r3c5,r3c8
-          ,r4c5,r4c6,r4c8,r5c2,r5c3,r5c7,r5c8,r6c2,r6c4,r6c5,r7c2,r7c5,r7c7,r7c9,r8c1,r8c4
-          ,r8c5,r8c9,r9c1,r9c3,r9c6
-        };
-        JButton btns[][]={
-            {r1c1,r1c2,r1c3,r1c4,r1c5,r1c6,r1c7,r1c8,r1c9},
-            {r2c1,r2c2,r2c3,r2c4,r2c5,r2c6,r2c7,r2c8,r2c9},
-            {r3c1,r3c2,r3c3,r3c4,r3c5,r3c6,r3c7,r3c8,r3c9},
-            {r4c1,r4c2,r4c3,r4c4,r4c5,r4c6,r4c7,r4c8,r4c9},
-            {r5c1,r5c2,r5c3,r5c4,r5c5,r5c6,r5c7,r5c8,r5c9},
-            {r6c1,r6c2,r6c3,r6c4,r6c5,r6c6,r6c7,r6c8,r6c9},
-            {r7c1,r7c2,r7c3,r7c4,r7c5,r7c6,r7c7,r7c8,r7c9},
-            {r8c1,r8c2,r8c3,r8c4,r8c5,r8c6,r8c7,r8c8,r8c9},
-            {r9c1,r9c2,r9c3,r9c4,r9c5,r9c6,r9c7,r9c8,r9c9},
-        }; 
         for(int i=0;i<9;i++){
             for(int j=0;j<9;j++){
                 boolean flag=false;
@@ -1780,24 +1746,18 @@ public class SUDOKU_FRAME extends javax.swing.JFrame {
         // TODO add your handling code here:
         r1c1.setBackground(white);
         r1c1.setText(number);
-        hm.put(r1c1, hm.getOrDefault(r1c1,0 )+1);
-        st.push(r1c1);
     }//GEN-LAST:event_r1c1ActionPerformed
 
     private void r1c2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_r1c2ActionPerformed
         // TODO add your handling code here:
         r1c2.setBackground(white);
         r1c2.setText(number);
-        hm.put(r1c2, hm.getOrDefault(r1c2,0 )+1);
-        st.push(r1c2);
     }//GEN-LAST:event_r1c2ActionPerformed
 
     private void r1c3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_r1c3ActionPerformed
         // TODO add your handling code here:
         r1c3.setBackground(white);
         r1c3.setText(number);
-        hm.put(r1c3, hm.getOrDefault(r1c3,0 )+1);
-        st.push(r1c3);
     }//GEN-LAST:event_r1c3ActionPerformed
 
     private void r1c5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_r1c5ActionPerformed
