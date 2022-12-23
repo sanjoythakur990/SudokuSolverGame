@@ -19,27 +19,84 @@ public class SUDOKU_FRAME extends javax.swing.JFrame {
      * Creates new form SUDOKU_FRAME
      */
     private String number;
-    private String solvedBoard[][]={
-        {"2","9","8","5","1","6","7","3","4"},
-        {"4","1","3","2","7","8","5","6","9"},
-        {"7","5","6","3","4","9","1","2","8"},
-        {"8","2","1","4","3","5","6","9","7"},
-        {"5","3","4","6","9","7","2","8","1"},
-        {"9","6","7","1","8","2","3","4","5"},
-        {"1","4","2","8","5","3","9","7","6"},
-        {"3","7","5","9","6","4","8","1","2"},
-        {"6","8","9","7","2","1","4","5","3"}
+//        {"2","9","8","5","1","6","7","3","4"},
+//        {"4","1","3","2","7","8","5","6","9"},
+//        {"7","5","6","3","4","9","1","2","8"},
+//        {"8","2","1","4","3","5","6","9","7"},
+//        {"5","3","4","6","9","7","2","8","1"},
+//        {"9","6","7","1","8","2","3","4","5"},
+//        {"1","4","2","8","5","3","9","7","6"},
+//        {"3","7","5","9","6","4","8","1","2"},
+//        {"6","8","9","7","2","1","4","5","3"}
+//    };
+    private String ele[]={"1","2","3","4","5","6","7","8","9"};
+    private String board[][]={
+        {".",".",".","5",".",".","7","3","4"},
+        {"4",".",".",".","7","8","5",".","9"},
+        {"7",".","6",".","4",".",".","2","."},
+        {".",".",".",".","3","5",".","9","."},
+        {".","3","4",".",".",".","2","8","."},
+        {".","6",".","1","8",".",".",".","."},
+        {".","4",".",".","5",".","9",".","6"},
+        {"3",".",".","9","6",".",".",".","2"},
+        {"6","8","9",".",".","1",".",".","."}
     };
-    private JButton preDefinedbtns[];
+    HashSet<JButton> set=new HashSet<>();
+    private String solvedBoard[][]=solveSudoku(board);
+//    private JButton preDefinedbtns[];
     private JButton btns[][];
     private boolean globalVar=false;
     public SUDOKU_FRAME() {
         initComponents();
-        this.preDefinedbtns=new JButton[]{r1c4,r1c7,r1c8,r1c9,r2c1,r2c5,r2c6,r2c7,r2c9,r3c1,r3c3,r3c5,r3c8
-          ,r4c5,r4c6,r4c8,r5c2,r5c3,r5c7,r5c8,r6c2,r6c4,r6c5,r7c2,r7c5,r7c7,r7c9,r8c1,r8c4
-         ,r8c5,r8c9,r9c1,r9c3,r9c6
-        };
+//        this.preDefinedbtns=new JButton[]{r1c4,r1c7,r1c8,r1c9,r2c1,r2c5,r2c6,r2c7,r2c9,r3c1,r3c3,r3c5,r3c8
+//          ,r4c5,r4c6,r4c8,r5c2,r5c3,r5c7,r5c8,r6c2,r6c4,r6c5,r7c2,r7c5,r7c7,r7c9,r8c1,r8c4
+//         ,r8c5,r8c9,r9c1,r9c3,r9c6
+//        };
+        
         this.btns = new JButton[][]{{r1c1,r1c2,r1c3,r1c4,r1c5,r1c6,r1c7,r1c8,r1c9}, {r2c1,r2c2,r2c3,r2c4,r2c5,r2c6,r2c7,r2c8,r2c9}, {r3c1,r3c2,r3c3,r3c4,r3c5,r3c6,r3c7,r3c8,r3c9}, {r4c1,r4c2,r4c3,r4c4,r4c5,r4c6,r4c7,r4c8,r4c9}, {r5c1,r5c2,r5c3,r5c4,r5c5,r5c6,r5c7,r5c8,r5c9}, {r6c1,r6c2,r6c3,r6c4,r6c5,r6c6,r6c7,r6c8,r6c9}, {r7c1,r7c2,r7c3,r7c4,r7c5,r7c6,r7c7,r7c8,r7c9}, {r8c1,r8c2,r8c3,r8c4,r8c5,r8c6,r8c7,r8c8,r8c9}, {r9c1,r9c2,r9c3,r9c4,r9c5,r9c6,r9c7,r9c8,r9c9}};
+        for(int i=0;i<9;i++){
+            for(int j=0;j<9;j++){
+                if(!board[i][j].equals("."))
+                    set.add(btns[i][j]);
+            }
+        }
+    }
+    String[][] solveSudoku(String board[][]){
+        String tempBoard[][]=new String[9][9];
+        for(int i=0;i<9;i++){
+            for(int j=0;j<9;j++){
+                tempBoard[i][j]=board[i][j];
+            }
+        }
+        if(solve(tempBoard,0))
+            return tempBoard;
+        return tempBoard;
+    }
+    boolean solve(String board[][], int row){
+        for(int i=row;i<board.length;i++){
+            for(int j=0;j<board[i].length;j++){
+                if(board[i][j].equals(".")){
+                    for(String s:ele){
+                        if(isValid(board,i,j,s)){
+                            board[i][j]=s;
+                            if(solve(board,i)==true)
+                                return true;
+                            board[i][j]=".";
+                        }
+                    }
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+    boolean isValid(String board[][], int row, int col, String s){
+        for(int i=0;i<9;i++){
+            if(board[row][i]==s) return false;
+            if(board[i][col]==s) return false;
+            if(board[3*(row/3)+(i/3)][3*(col/3)+(i%3)]==s) return false;
+        }
+        return true;
     }
     public void chooseNumber(JButton btn){
         selectionbtn1.setBackground(black);
@@ -58,12 +115,12 @@ public class SUDOKU_FRAME extends javax.swing.JFrame {
         for(int i=0;i<9;i++){
             for(int j=0;j<9;j++){
                 boolean flag=false;
-                for(int k=0;k<preDefinedbtns.length;k++){
-                    if(btns[i][j]==preDefinedbtns[k]){
+//                for(int k=0;k<preDefinedbtns.length;k++){
+                    if(set.contains(btns[i][j])){
                         flag=true;
-                        break;
+//                        break;
                     }
-                }
+//                }
                 if(!flag){
                     if(!globalVar){
                         btns[i][j].setText(solvedBoard[i][j]);
@@ -99,12 +156,12 @@ public class SUDOKU_FRAME extends javax.swing.JFrame {
         for(int i=0;i<9;i++){
             for(int j=0;j<9;j++){
                 boolean flag=false;
-                for(int k=0;k<preDefinedbtns.length;k++){
-                    if(btns[i][j]==preDefinedbtns[k]){
+//                for(int k=0;k<preDefinedbtns.length;k++){
+                    if(set.contains(btns[i][j])){
                         flag=true;
-                        break;
+//                        break;
                     }
-                }
+//                }
                 if(!flag){
                     btns[i][j].setText("");
                     btns[i][j].setBackground(white);
@@ -2245,6 +2302,11 @@ public class SUDOKU_FRAME extends javax.swing.JFrame {
                 new SUDOKU_FRAME().setVisible(true);
             }
         });
+//        for(int i=0;i<9;i++){
+//            for(int j=0;j<9;j++){
+//                System.out.print(new SUDOKU_FRAME().solvedBoard[i][j]);
+//            }
+//        }
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
