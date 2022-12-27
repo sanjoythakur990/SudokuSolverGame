@@ -13,22 +13,23 @@ import javax.swing.JOptionPane;
  *
  * @author USER
  */
+class Pair{
+    JButton btn;
+    String s;
+    Pair(JButton btn, String s){
+        this.btn=btn;
+        this.s=s;
+    }
+    Pair(){
+        
+    }
+}
 public class SUDOKU_FRAME extends javax.swing.JFrame {
 
     /**
      * Creates new form SUDOKU_FRAME
      */
     private String number;
-//        {"2","9","8","5","1","6","7","3","4"},
-//        {"4","1","3","2","7","8","5","6","9"},
-//        {"7","5","6","3","4","9","1","2","8"},
-//        {"8","2","1","4","3","5","6","9","7"},
-//        {"5","3","4","6","9","7","2","8","1"},
-//        {"9","6","7","1","8","2","3","4","5"},
-//        {"1","4","2","8","5","3","9","7","6"},
-//        {"3","7","5","9","6","4","8","1","2"},
-//        {"6","8","9","7","2","1","4","5","3"}
-//    };
     private String ele[]={"1","2","3","4","5","6","7","8","9"};
     private String board[][]={
         {".",".",".","5",".",".","7","3","4"},
@@ -41,18 +42,14 @@ public class SUDOKU_FRAME extends javax.swing.JFrame {
         {"3",".",".","9","6",".",".",".","2"},
         {"6","8","9",".",".","1",".",".","."}
     };
-    HashSet<JButton> set=new HashSet<>();
+    private HashSet<JButton> set=new HashSet<>();
+    private Stack<Pair> st=new Stack<>();
     private String solvedBoard[][]=solveSudoku(board);
 //    private JButton preDefinedbtns[];
     private JButton btns[][];
     private boolean globalVar=false;
     public SUDOKU_FRAME() {
         initComponents();
-//        this.preDefinedbtns=new JButton[]{r1c4,r1c7,r1c8,r1c9,r2c1,r2c5,r2c6,r2c7,r2c9,r3c1,r3c3,r3c5,r3c8
-//          ,r4c5,r4c6,r4c8,r5c2,r5c3,r5c7,r5c8,r6c2,r6c4,r6c5,r7c2,r7c5,r7c7,r7c9,r8c1,r8c4
-//         ,r8c5,r8c9,r9c1,r9c3,r9c6
-//        };
-        
         this.btns = new JButton[][]{{r1c1,r1c2,r1c3,r1c4,r1c5,r1c6,r1c7,r1c8,r1c9}, {r2c1,r2c2,r2c3,r2c4,r2c5,r2c6,r2c7,r2c8,r2c9}, {r3c1,r3c2,r3c3,r3c4,r3c5,r3c6,r3c7,r3c8,r3c9}, {r4c1,r4c2,r4c3,r4c4,r4c5,r4c6,r4c7,r4c8,r4c9}, {r5c1,r5c2,r5c3,r5c4,r5c5,r5c6,r5c7,r5c8,r5c9}, {r6c1,r6c2,r6c3,r6c4,r6c5,r6c6,r6c7,r6c8,r6c9}, {r7c1,r7c2,r7c3,r7c4,r7c5,r7c6,r7c7,r7c8,r7c9}, {r8c1,r8c2,r8c3,r8c4,r8c5,r8c6,r8c7,r8c8,r8c9}, {r9c1,r9c2,r9c3,r9c4,r9c5,r9c6,r9c7,r9c8,r9c9}};
         for(int i=0;i<9;i++){
             for(int j=0;j<9;j++){
@@ -98,6 +95,31 @@ public class SUDOKU_FRAME extends javax.swing.JFrame {
         }
         return true;
     }
+    private void undo(){
+        if(st.isEmpty()){
+            JOptionPane.showMessageDialog(this,"Please enter a value first before using undo functionality","Sudoku Game",JOptionPane.INFORMATION_MESSAGE);
+        }
+        else{
+            Pair deleted=st.pop();
+            Stack<Pair> tempst=new Stack<>();
+            boolean flag=false;
+            while(!st.isEmpty()){
+                if(deleted.btn==st.peek().btn && deleted.s!=st.peek().s){
+                    flag=true;
+                    deleted.btn.setText(st.peek().s);
+                    break;
+                }
+                else if(deleted.btn==st.peek().btn && deleted.s==st.peek().s)
+                    st.pop();
+                else
+                    tempst.push(st.pop());
+            }
+            if(!flag) deleted.btn.setText("");
+            while(!tempst.isEmpty()){
+                st.push(tempst.pop());
+            } 
+        }
+    }
     public void chooseNumber(JButton btn){
         selectionbtn1.setBackground(black);
         selectionbtn2.setBackground(black);
@@ -115,12 +137,9 @@ public class SUDOKU_FRAME extends javax.swing.JFrame {
         for(int i=0;i<9;i++){
             for(int j=0;j<9;j++){
                 boolean flag=false;
-//                for(int k=0;k<preDefinedbtns.length;k++){
                     if(set.contains(btns[i][j])){
                         flag=true;
-//                        break;
                     }
-//                }
                 if(!flag){
                     if(!globalVar){
                         btns[i][j].setText(solvedBoard[i][j]);
@@ -156,12 +175,9 @@ public class SUDOKU_FRAME extends javax.swing.JFrame {
         for(int i=0;i<9;i++){
             for(int j=0;j<9;j++){
                 boolean flag=false;
-//                for(int k=0;k<preDefinedbtns.length;k++){
                     if(set.contains(btns[i][j])){
                         flag=true;
-//                        break;
                     }
-//                }
                 if(!flag){
                     btns[i][j].setText("");
                     btns[i][j].setBackground(white);
@@ -1803,276 +1819,368 @@ public class SUDOKU_FRAME extends javax.swing.JFrame {
         // TODO add your handling code here:
         r1c1.setBackground(white);
         r1c1.setText(number);
+        Pair p=new Pair(r1c1,number);
+        st.push(p);
     }//GEN-LAST:event_r1c1ActionPerformed
 
     private void r1c2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_r1c2ActionPerformed
         // TODO add your handling code here:
         r1c2.setBackground(white);
         r1c2.setText(number);
+        Pair p=new Pair(r1c2,number);
+        st.push(p);
     }//GEN-LAST:event_r1c2ActionPerformed
 
     private void r1c3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_r1c3ActionPerformed
         // TODO add your handling code here:
         r1c3.setBackground(white);
         r1c3.setText(number);
+        Pair p=new Pair(r1c3,number);
+        st.push(p);
     }//GEN-LAST:event_r1c3ActionPerformed
 
     private void r1c5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_r1c5ActionPerformed
         // TODO add your handling code here:
         r1c5.setBackground(white);
         r1c5.setText(number);
+        Pair p=new Pair(r1c5,number);
+        st.push(p);
     }//GEN-LAST:event_r1c5ActionPerformed
 
     private void r1c6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_r1c6ActionPerformed
         // TODO add your handling code here:
         r1c6.setBackground(white);
         r1c6.setText(number);
+        Pair p=new Pair(r1c6,number);
+        st.push(p);
     }//GEN-LAST:event_r1c6ActionPerformed
 
     private void r2c2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_r2c2ActionPerformed
         // TODO add your handling code here:
         r2c2.setBackground(white);
         r2c2.setText(number);
+        Pair p=new Pair(r2c2,number);
+        st.push(p);
     }//GEN-LAST:event_r2c2ActionPerformed
 
     private void r2c3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_r2c3ActionPerformed
         // TODO add your handling code here:
         r2c3.setBackground(white);
         r2c3.setText(number);
+        Pair p=new Pair(r2c3,number);
+        st.push(p);
     }//GEN-LAST:event_r2c3ActionPerformed
 
     private void r2c4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_r2c4ActionPerformed
         // TODO add your handling code here:
         r2c4.setBackground(white);
         r2c4.setText(number);
+        Pair p=new Pair(r2c4,number);
+        st.push(p);
     }//GEN-LAST:event_r2c4ActionPerformed
 
     private void r2c8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_r2c8ActionPerformed
         // TODO add your handling code here:
         r2c8.setBackground(white);
         r2c8.setText(number);
+        Pair p=new Pair(r2c8,number);
+        st.push(p);
     }//GEN-LAST:event_r2c8ActionPerformed
 
     private void r3c2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_r3c2ActionPerformed
         // TODO add your handling code here:
         r3c2.setBackground(white);
         r3c2.setText(number);
+        Pair p=new Pair(r3c2,number);
+        st.push(p);
     }//GEN-LAST:event_r3c2ActionPerformed
 
     private void r3c4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_r3c4ActionPerformed
         // TODO add your handling code here:
         r3c4.setBackground(white);
         r3c4.setText(number);
+        Pair p=new Pair(r3c4,number);
+        st.push(p);
     }//GEN-LAST:event_r3c4ActionPerformed
 
     private void r3c6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_r3c6ActionPerformed
         // TODO add your handling code here:
         r3c6.setBackground(white);
         r3c6.setText(number);
+        Pair p=new Pair(r3c6,number);
+        st.push(p);
     }//GEN-LAST:event_r3c6ActionPerformed
 
     private void r3c7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_r3c7ActionPerformed
         // TODO add your handling code here:
         r3c7.setBackground(white);
         r3c7.setText(number);
+        Pair p=new Pair(r3c7,number);
+        st.push(p);
     }//GEN-LAST:event_r3c7ActionPerformed
 
     private void r3c9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_r3c9ActionPerformed
         // TODO add your handling code here:
         r3c9.setBackground(white);
         r3c9.setText(number);
+        Pair p=new Pair(r3c9,number);
+        st.push(p);
     }//GEN-LAST:event_r3c9ActionPerformed
 
     private void r4c1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_r4c1ActionPerformed
         // TODO add your handling code here:
         r4c1.setBackground(white);
         r4c1.setText(number);
+        Pair p=new Pair(r4c1,number);
+        st.push(p);
     }//GEN-LAST:event_r4c1ActionPerformed
 
     private void r4c2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_r4c2ActionPerformed
         // TODO add your handling code here:
         r4c2.setBackground(white);
         r4c2.setText(number);
+        Pair p=new Pair(r4c2,number);
+        st.push(p);
     }//GEN-LAST:event_r4c2ActionPerformed
 
     private void r4c3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_r4c3ActionPerformed
         // TODO add your handling code here:
         r4c3.setBackground(white);
         r4c3.setText(number);
+        Pair p=new Pair(r4c3,number);
+        st.push(p);
     }//GEN-LAST:event_r4c3ActionPerformed
 
     private void r4c4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_r4c4ActionPerformed
         // TODO add your handling code here:
         r4c4.setBackground(white);
         r4c4.setText(number);
+        Pair p=new Pair(r4c4,number);
+        st.push(p);
     }//GEN-LAST:event_r4c4ActionPerformed
 
     private void r4c7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_r4c7ActionPerformed
         // TODO add your handling code here:
         r4c7.setBackground(white);
         r4c7.setText(number);
+        Pair p=new Pair(r4c7,number);
+        st.push(p);
     }//GEN-LAST:event_r4c7ActionPerformed
 
     private void r4c9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_r4c9ActionPerformed
         // TODO add your handling code here:
         r4c9.setBackground(white);
         r4c9.setText(number);
+        Pair p=new Pair(r4c9,number);
+        st.push(p);
     }//GEN-LAST:event_r4c9ActionPerformed
 
     private void r5c1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_r5c1ActionPerformed
         // TODO add your handling code here:
         r5c1.setBackground(white);
         r5c1.setText(number);
+        Pair p=new Pair(r5c1,number);
+        st.push(p);
     }//GEN-LAST:event_r5c1ActionPerformed
 
     private void r5c4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_r5c4ActionPerformed
         // TODO add your handling code here:
         r5c4.setBackground(white);
         r5c4.setText(number);
+        Pair p=new Pair(r5c4,number);
+        st.push(p);
     }//GEN-LAST:event_r5c4ActionPerformed
 
     private void r5c5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_r5c5ActionPerformed
         // TODO add your handling code here:
         r5c5.setBackground(white);
         r5c5.setText(number);
+        Pair p=new Pair(r5c5,number);
+        st.push(p);
     }//GEN-LAST:event_r5c5ActionPerformed
 
     private void r5c6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_r5c6ActionPerformed
         // TODO add your handling code here:
         r5c6.setBackground(white);
         r5c6.setText(number);
+        Pair p=new Pair(r5c6,number);
+        st.push(p);
     }//GEN-LAST:event_r5c6ActionPerformed
 
     private void r5c9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_r5c9ActionPerformed
         // TODO add your handling code here:
         r5c9.setBackground(white);
         r5c9.setText(number);
+        Pair p=new Pair(r5c9,number);
+        st.push(p);
     }//GEN-LAST:event_r5c9ActionPerformed
 
     private void r6c1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_r6c1ActionPerformed
         // TODO add your handling code here:
         r6c1.setBackground(white);
         r6c1.setText(number);
+        Pair p=new Pair(r6c1,number);
+        st.push(p);
     }//GEN-LAST:event_r6c1ActionPerformed
 
     private void r6c3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_r6c3ActionPerformed
         // TODO add your handling code here:
         r6c3.setBackground(white);
         r6c3.setText(number);
+        Pair p=new Pair(r6c3,number);
+        st.push(p);
     }//GEN-LAST:event_r6c3ActionPerformed
 
     private void r6c6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_r6c6ActionPerformed
         // TODO add your handling code here:
         r6c6.setBackground(white);
         r6c6.setText(number);
+        Pair p=new Pair(r6c6,number);
+        st.push(p);
     }//GEN-LAST:event_r6c6ActionPerformed
 
     private void r6c7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_r6c7ActionPerformed
         // TODO add your handling code here:
         r6c7.setBackground(white);
         r6c7.setText(number);
+        Pair p=new Pair(r6c7,number);
+        st.push(p);
     }//GEN-LAST:event_r6c7ActionPerformed
 
     private void r6c8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_r6c8ActionPerformed
         // TODO add your handling code here:
         r6c8.setBackground(white);
         r6c8.setText(number);
+        Pair p=new Pair(r6c8,number);
+        st.push(p);
     }//GEN-LAST:event_r6c8ActionPerformed
 
     private void r6c9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_r6c9ActionPerformed
         // TODO add your handling code here:
         r6c9.setBackground(white);
         r6c9.setText(number);
+        Pair p=new Pair(r6c9,number);
+        st.push(p);
     }//GEN-LAST:event_r6c9ActionPerformed
 
     private void r7c1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_r7c1ActionPerformed
         // TODO add your handling code here:
         r7c1.setBackground(white);
         r7c1.setText(number);
+        Pair p=new Pair(r7c1,number);
+        st.push(p);
     }//GEN-LAST:event_r7c1ActionPerformed
 
     private void r7c3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_r7c3ActionPerformed
         // TODO add your handling code here:
         r7c3.setBackground(white);
         r7c3.setText(number);
+        Pair p=new Pair(r7c3,number);
+        st.push(p);
     }//GEN-LAST:event_r7c3ActionPerformed
 
     private void r7c4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_r7c4ActionPerformed
         // TODO add your handling code here:
         r7c4.setBackground(white);
         r7c4.setText(number);
+        Pair p=new Pair(r7c4,number);
+        st.push(p);
     }//GEN-LAST:event_r7c4ActionPerformed
 
     private void r7c6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_r7c6ActionPerformed
         // TODO add your handling code here:
         r7c6.setBackground(white);
         r7c6.setText(number);
+        Pair p=new Pair(r7c6,number);
+        st.push(p);
     }//GEN-LAST:event_r7c6ActionPerformed
 
     private void r7c8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_r7c8ActionPerformed
         // TODO add your handling code here:
         r7c8.setBackground(white);
         r7c8.setText(number);
+        Pair p=new Pair(r7c8,number);
+        st.push(p);
     }//GEN-LAST:event_r7c8ActionPerformed
 
     private void r8c2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_r8c2ActionPerformed
         // TODO add your handling code here:
         r8c2.setBackground(white);
         r8c2.setText(number);
+        Pair p=new Pair(r8c2,number);
+        st.push(p);
     }//GEN-LAST:event_r8c2ActionPerformed
 
     private void r8c3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_r8c3ActionPerformed
         // TODO add your handling code here:
         r8c3.setBackground(white);
         r8c3.setText(number);
+        Pair p=new Pair(r8c3,number);
+        st.push(p);
     }//GEN-LAST:event_r8c3ActionPerformed
 
     private void r8c6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_r8c6ActionPerformed
         // TODO add your handling code here:
         r8c6.setBackground(white);
         r8c6.setText(number);
+        Pair p=new Pair(r8c6,number);
+        st.push(p);
     }//GEN-LAST:event_r8c6ActionPerformed
 
     private void r8c7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_r8c7ActionPerformed
         // TODO add your handling code here:
         r8c7.setBackground(white);
         r8c7.setText(number);
+        Pair p=new Pair(r8c7,number);
+        st.push(p);
     }//GEN-LAST:event_r8c7ActionPerformed
 
     private void r8c8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_r8c8ActionPerformed
         // TODO add your handling code here:
         r8c8.setBackground(white);
         r8c8.setText(number);
+        Pair p=new Pair(r8c8,number);
+        st.push(p);
     }//GEN-LAST:event_r8c8ActionPerformed
 
     private void r9c4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_r9c4ActionPerformed
         // TODO add your handling code here:
         r9c4.setBackground(white);
         r9c4.setText(number);
+        Pair p=new Pair(r9c4,number);
+        st.push(p);
     }//GEN-LAST:event_r9c4ActionPerformed
 
     private void r9c5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_r9c5ActionPerformed
         // TODO add your handling code here:
         r9c5.setBackground(white);
         r9c5.setText(number);
+        Pair p=new Pair(r9c5,number);
+        st.push(p);
     }//GEN-LAST:event_r9c5ActionPerformed
 
     private void r9c7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_r9c7ActionPerformed
         // TODO add your handling code here:
         r9c7.setBackground(white);
         r9c7.setText(number);
+        Pair p=new Pair(r9c7,number);
+        st.push(p);
     }//GEN-LAST:event_r9c7ActionPerformed
 
     private void r9c8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_r9c8ActionPerformed
         // TODO add your handling code here:
         r9c8.setBackground(white);
         r9c8.setText(number);
+        Pair p=new Pair(r9c8,number);
+        st.push(p);
     }//GEN-LAST:event_r9c8ActionPerformed
 
     private void r9c9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_r9c9ActionPerformed
         // TODO add your handling code here:
         r9c9.setBackground(white);
         r9c9.setText(number);
+        Pair p=new Pair(r9c9,number);
+        st.push(p);
     }//GEN-LAST:event_r9c9ActionPerformed
 
     private void r4c5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_r4c5ActionPerformed
@@ -2261,12 +2369,13 @@ public class SUDOKU_FRAME extends javax.swing.JFrame {
         // TODO add your handling code here:
         if(JOptionPane.showConfirmDialog(this,"Confirm if you want to Reset","Sudoku Game",JOptionPane.YES_NO_OPTION)==JOptionPane.YES_NO_OPTION){
             resetGame();
+            st.clear();
         }
     }//GEN-LAST:event_resetbtnActionPerformed
 
     private void undobtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_undobtnActionPerformed
         // TODO add your handling code here:
-
+        undo();
     }//GEN-LAST:event_undobtnActionPerformed
 
     /**
